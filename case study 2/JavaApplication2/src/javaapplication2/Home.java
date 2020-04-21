@@ -71,14 +71,14 @@ public class Home extends javax.swing.JFrame {
     public Home() {
         initComponents();
         this.setTitle("Trang chu");
-        list = new ArrayList<>();   
+        list = new ArrayList<>();
         readFile();
         showList(list);
 
     }
 
     public void showList(ArrayList<Product> list) {
-       
+
         model = (DefaultTableModel) jTable1.getModel();
         int i = 1;
         model.setRowCount(0);
@@ -112,7 +112,6 @@ public class Home extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         valueFind = new javax.swing.JTextField();
-        buttonShowList = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -237,6 +236,11 @@ public class Home extends javax.swing.JFrame {
                 "STT", "Tên sản phẩm", "Mã sản phẩm", "Số lượng"
             }
         ));
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         valueFind.addActionListener(new java.awt.event.ActionListener() {
@@ -250,13 +254,6 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
-        buttonShowList.setText("Hien thi bang");
-        buttonShowList.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonShowListActionPerformed(evt);
-            }
-        });
-
         jLabel5.setText("Tìm kiếm");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -265,11 +262,7 @@ public class Home extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(buttonShowList)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -292,9 +285,7 @@ public class Home extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonShowList)
-                .addGap(29, 29, 29))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -305,7 +296,7 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_deleteInputActionPerformed
 
     private void inPutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inPutActionPerformed
-        
+
         Product product = new Product();
         product.setNameString(inPutNameProduct.getText());
         product.setCodeString(inPutCodeProduct.getText());
@@ -322,7 +313,7 @@ public class Home extends javax.swing.JFrame {
     }
     int removeIndex;
     private void deleteValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteValueActionPerformed
-         
+
         removeIndex = jTable1.getSelectedRow();
         if (list.isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Danh sach trong");
@@ -336,32 +327,22 @@ public class Home extends javax.swing.JFrame {
         }
         writeFile();
     }//GEN-LAST:event_deleteValueActionPerformed
-    int fixtIndex;
+
     private void fixValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixValueActionPerformed
-        
-        fixtIndex = jTable1.getSelectedRow();
-        if (list.isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "Danh sach trong");
-        } else {
-            if (fixtIndex == -1) {
-                JOptionPane.showMessageDialog(rootPane, "Hay chon dong can sua");
-            } else {
-                EditFrom editFrom = new EditFrom();
-                editFrom.setVisible(true);
-            }
+        String name;
+        String code;
+        int amount;
+        name = inPutNameProduct.getText();
+        code = inPutCodeProduct.getText();
+        amount = Integer.parseInt(inPutAmount.getText());
+        Product product = new Product(name, code, amount);
+        if (JOptionPane.showConfirmDialog(null, "Ban muon tiep tuc?", "Xác nhận", JOptionPane.DEFAULT_OPTION) == 0) {
+            JOptionPane.showMessageDialog(rootPane, "Da thay doi");
+            updataProduct(product);
+            clearData();
         }
-        writeFile();
     }//GEN-LAST:event_fixValueActionPerformed
-
-    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_ExitActionPerformed
     int findIndex;
-    private void buttonShowListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonShowListActionPerformed
-        
-        showList(list);
-    }//GEN-LAST:event_buttonShowListActionPerformed
-
     private void valueFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_valueFindActionPerformed
         model = (DefaultTableModel) jTable1.getModel();
         String search = valueFind.getText();
@@ -379,6 +360,27 @@ public class Home extends javax.swing.JFrame {
         jTable1.setRowSorter(tr);
         tr.setRowFilter(RowFilter.regexFilter(search));
     }//GEN-LAST:event_valueFindKeyReleased
+    int fixtIndex;
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+
+        fixtIndex = jTable1.getSelectedRow();
+        if (list.isEmpty()) {
+            JOptionPane.showMessageDialog(rootPane, "Danh sach trong");
+        } else {
+            if (fixtIndex == -1) {
+                JOptionPane.showMessageDialog(rootPane, "Hay chon dong can sua");
+            } else {
+                inPutNameProduct.setText(list.get(fixtIndex).getNameString());
+                inPutCodeProduct.setText(list.get(fixtIndex).getCodeString());
+                inPutAmount.setText(list.get(fixtIndex).getAmount() + "");
+            }
+        }
+        writeFile();
+    }//GEN-LAST:event_jTable1MouseClicked
+
+    private void ExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_ExitActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -390,7 +392,6 @@ public class Home extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Exit;
-    private javax.swing.JButton buttonShowList;
     private javax.swing.JButton deleteInput;
     private javax.swing.JButton deleteValue;
     private javax.swing.JButton fixValue;
