@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.*;
-import java.util.List;
 import java.io.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 
 public class Home extends javax.swing.JFrame {
 
@@ -297,14 +298,23 @@ public class Home extends javax.swing.JFrame {
 
     private void inPutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inPutActionPerformed
 
-        Product product = new Product();
-        product.setNameString(inPutNameProduct.getText());
-        product.setCodeString(inPutCodeProduct.getText());
-        product.setAmount(Integer.parseInt(inPutAmount.getText()));
-        list.add(product);
-        showList(list);
-        clearData();
-        writeFile();
+        String number = "[1-9][0-9]*";
+        Pattern pattern = Pattern.compile(number);
+        Matcher matcher = pattern.matcher(inPutAmount.getText());
+        if (matcher.matches()) {
+            Product product = new Product();
+            product.setNameString(inPutNameProduct.getText());
+            product.setCodeString(inPutCodeProduct.getText());
+            product.setAmount(Integer.parseInt(inPutAmount.getText()));
+            list.add(product);
+            showList(list);
+            clearData();
+            writeFile();
+            
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "nhap sai dinh dang so luong");
+        }
+
     }//GEN-LAST:event_inPutActionPerformed
     private void clearData() {
         inPutNameProduct.setText("");
